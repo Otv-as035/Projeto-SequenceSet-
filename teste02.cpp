@@ -308,26 +308,150 @@ public:
         arquivo.close();
         cout << "Dados inseridos a partir do arquivo de texto.\n";
     }
+    
+    // Método para inserir dados via entrada padrão de forma ordenada
+	void InserirDadoViaEntradaPadrao() {
+		// Criação de um novo registro
+		Dados novoRegistro;
+
+		// Leitura dos dados via entrada padrão
+		cout << "Digite os dados do novo registro:\n";
+		cout << "Measure: ";
+		cin >> novoRegistro.measure;
+		cout << "Quantile: ";
+		cin >> novoRegistro.quantile;
+		cout << "Area: ";
+		cin >> novoRegistro.area;
+		cout << "Sex: ";
+		cin >> novoRegistro.sex;
+		cout << "Age: ";
+		cin >> novoRegistro.age;
+		cout << "Geography: ";
+		cin >> novoRegistro.geography;
+		cout << "Ethnic: ";
+		cin >> novoRegistro.ethnic;
+		cout << "Value: ";
+		cin >> novoRegistro.value;
+
+		// Verificar se o contêiner atual está cheio
+		if (cauda->tamanhoAtual == capacidade) {
+			AdicionarNovoContainer();
+		}
+
+		// Adicionar o novo registro ao contêiner
+		cauda->registros[cauda->tamanhoAtual] = novoRegistro;
+		cauda->tamanhoAtual++;
+
+		// Realizar a ordenação após a inserção
+		QuickSort();
+		cout << "Dado inserido com sucesso e registros ordenados!\n";
+	}
+	
+	// Função para remover um dado específico baseado no valor
+	void RemoverDadoEspecifico(int valor) {
+		Container* atual = cabeca;
+		bool encontrado = false;
+
+		while (atual != nullptr) {
+			// Procura o dado no contêiner atual
+			for (int i = 0; i < atual->tamanhoAtual; i++) {
+				if (atual->registros[i].value == valor) {
+					// Dado encontrado, remove-o
+					for (int j = i; j < atual->tamanhoAtual - 1; j++) {
+						atual->registros[j] = atual->registros[j + 1];
+					}
+					atual->tamanhoAtual--; // Reduz o tamanho do contêiner
+					encontrado = true;
+					break;
+				}
+			}
+
+			// Se encontrado, não precisa procurar mais
+			if (encontrado) {
+				break;
+			}
+
+			atual = atual->proximo;  // Avança para o próximo contêiner
+		}
+
+		if (encontrado) {
+			cout << "Dado com valor " << valor << " removido com sucesso.\n";
+		} else {
+			cout << "Dado com valor " << valor << " não encontrado.\n";
+		}
+	}
+	
+	// Função para buscar um dado específico baseado no valor
+	void BuscarDadoEspecifico(int valor) {
+		Container* atual = cabeca;
+		bool encontrado = false;
+
+		while (atual != nullptr) {
+			// Procura o dado no contêiner atual
+			for (int i = 0; i < atual->tamanhoAtual; i++) {
+				if (atual->registros[i].value == valor) {
+					// Dado encontrado, exibe as informações do registro
+					cout << "Dado encontrado: \n";
+					cout << "Measure: " << atual->registros[i].measure << "\n";
+					cout << "Quantile: " << atual->registros[i].quantile << "\n";
+					cout << "Area: " << atual->registros[i].area << "\n";
+					cout << "Sex: " << atual->registros[i].sex << "\n";
+					cout << "Age: " << atual->registros[i].age << "\n";
+					cout << "Geography: " << atual->registros[i].geography << "\n";
+					cout << "Ethnic: " << atual->registros[i].ethnic << "\n";
+					cout << "Value: " << atual->registros[i].value << "\n";
+					encontrado = true;
+					break;
+				}
+			}
+
+			// Se encontrado, não precisa procurar mais
+			if (encontrado) {
+				break;
+			}
+
+			atual = atual->proximo;  // Avança para o próximo contêiner
+		}
+
+		if (!encontrado) {
+			cout << "Dado com valor " << valor << " não encontrado.\n";
+		}
+	}
 };
 
 /* 
 Função principal para interação com o usuário.
 */
+#include <iostream>
+#include <string>
+using namespace std;
+
 int main() {
-    SequenceSet operacaoDe; // Criação do SequenceSet
+    SequenceSet operacaoDe; // Criacao do SequenceSet
     int opcao;
 
-    cout << "******** Bem-vindo à Criação do SequenceSet **********\n";
+    cout << "******************************************************\n";
+    cout << "*****    BEM-VINDO A CRIACAO DO SEQUENCESET    *****\n";
+    cout << "******************************************************\n";
+    cout << "\n";
 
     do {
-        cout << "\nMenu de opções:\n";
-        cout << "1 - Leitura de arquivo\n";
-        cout << "2 - Exibir registros\n";
-        cout << "3 - Inserir dados via arquivo texto\n";
-        cout << "4 - Salvar dados em arquivo CSV\n";
-        cout << "5 - Sair\n";
-        cout << "Opção: ";
+        cout << "***********************************************\n";
+        cout << "             MENU DE OPCOES                    \n";
+        cout << "***********************************************\n";
+        cout << " 1 - Leitura de arquivo                        \n";
+        cout << " 2 - Exibir registros                          \n";
+        cout << " 3 - Inserir dados via arquivo texto           \n";
+        cout << " 4 - Salvar dados em arquivo CSV               \n";
+        cout << " 5 - Inserir dado via entrada padrao           \n";
+        cout << " 6 - Remover dado especifico                   \n";
+        cout << " 7 - Buscar dado especifico                    \n";
+        cout << " 8 - Sair                                      \n";
+        cout << "***********************************************\n";
+        cout << " Selecione uma opcao (1-8): ";
         cin >> opcao;
+
+        cout << "\n";
 
         switch (opcao) {
             case 1: {
@@ -347,7 +471,7 @@ int main() {
                 operacaoDe.Exibir();
                 break;
             case 3: {
-                cout << "Digite o nome do arquivo de texto para inserção: ";
+                cout << "Digite o nome do arquivo de texto para insercao: ";
                 string arquivoTexto;
                 cin >> arquivoTexto;
 
@@ -362,13 +486,36 @@ int main() {
                 operacaoDe.SalvarEmArquivoCSV(nomeArquivo);
                 break;
             }
-            case 5:
+            case 5: {
+                operacaoDe.InserirDadoViaEntradaPadrao();  // Chama o método de inserção
+                break;
+            }
+            case 6: {
+                cout << "Digite o valor do dado a ser removido: ";
+                int valor;
+                cin >> valor;
+
+                operacaoDe.RemoverDadoEspecifico(valor);  // Chama o método de remoção
+                break;
+            }
+            case 7: {
+                cout << "Digite o valor do dado a ser buscado: ";
+                int valor;
+                cin >> valor;
+
+                operacaoDe.BuscarDadoEspecifico(valor);  // Chama o método de busca
+                break;
+            }
+            case 8:
                 cout << "Saindo...\n";
                 break;
             default:
-                cout << "Opção inválida! Tente novamente.\n";
+                cout << "Opcao invalida! Tente novamente.\n";
         }
-    } while (opcao != 5);
+
+        cout << "\n";
+    } while (opcao != 8);
 
     return 0;
 }
+
